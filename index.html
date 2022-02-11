@@ -1,0 +1,264 @@
+<html>
+    <head>
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+<link rel="stylesheet" href="css/constant.css"> 
+    <style>
+    html,body{
+        background-color: #000817;
+        width: 100%; height: 100%;
+        margin: 0; padding: 0;
+        overflow-x: hidden;
+    }    
+    header{
+        display: block; width:90%; box-sizing: border-box;
+        margin: 20px auto;
+        border-radius: 5px;
+        padding: 20px; text-align: center; 
+        font-weight: 1000; font-style: bold; font-size: 45px;
+        background: linear-gradient(to right, #ffffff44, #00081744);
+        backdrop-filter: blur(25px);
+        color: white;
+    }    
+    #menu-list{
+        text-align: center;
+        width: 100%; 
+    }
+    .menu-item{
+        display: inline-block; margin: 10px 10px;
+        text-align: center;
+    }
+    .menu-item p{
+        display: inline; color: white; font-weight:500;
+        text-align: center; margin-top: 10px;
+        font-size: 10px; font-family: pF; 
+    }    
+    .menu-item icon{
+        display: block;
+        width: 28px;; height: 28px;;
+        background-color: orangered;
+        opacity: 0.7;
+    }    
+    .menu-item[t-box] icon{
+        
+    }    
+    .menu-item[t-triangle] icon{
+        background-color: transparent;
+        width: 0px;
+        height: 0px;
+        border-left: 14px solid transparent;
+        border-right: 14px solid transparent;
+        border-bottom: 28px solid orangered;
+    }    
+    .menu-item[t-o] icon{
+        border-radius: 100%;
+    }    
+    .menu-item[t-x] icon{
+        position: relative;
+        background-color: transparent;
+    }    
+    .menu-item[t-x] icon::before{
+         content: ""; position: absolute; 
+         width: 7px; height: 28px;
+         background: linear-gradient(to top, orangered, #db7210);
+         transform: rotate(-45deg);//translateX(-50%);
+    }    
+    .menu-item[t-x] icon::after{
+         content: ""; position: absolute; 
+         width: 7px; height: 28px;
+         background: linear-gradient(to bottom, orangered, #db7210);
+         transform: rotate(45deg);//translateX(-50%);
+    }    
+    
+    
+    #welcome-sect{
+        margin: 100px auto;
+        position: relative;
+        z-index: 1;
+        border-radius: 60% 40% 30% 70% / 60% 90% 40% 70% ;
+        background-color: #db7210;
+        background: linear-gradient(to right bottom, #db7210, orangered);
+        min-height: 150px;
+        width: 100%; box-sizing: border-box;
+    }
+    #welcome-sect p#welcome-sect-main{
+        color: white; margin-left: 20px; margin-right: 100px;
+        font-weight: 1000; font-style: bold; font-size: 38px;
+        font-family: h2F; word-wrap: break-word;
+        position: relative;
+    }
+    #welcome-sect p#welcome-sect-main gs{
+        background-color: transparent;
+        border-bottom-right-radius: 50px; position: relative; padding: 10px;
+        font-family: hF; font-weight: 1000; font-style: bold;
+        color: #000817;
+    }
+    #welcome-sect p#welcome-sect-main gs::before{
+        border: 2px solid #000817; content: ""; position: absolute;
+        background-color: transparent; width: 160px; height: 80px;
+        border-radius: 50%; transform: rotate(-45deg);
+        top: 50% left: 50%; z-index: -1; 
+        animation: rotate-1 ease-in 7.6s infinite;
+    }
+    #welcome-sect p#welcome-sect-main gs::after{
+        border: 2px solid #000817; content: ""; position: absolute;
+        background-color: transparent; width: 160px; height: 80px;
+        border-radius: 50%; transform: rotate(45deg);
+        top: 0% left: 0%; z-index: -1; transform: translate(50px, 0);
+        animation: rotate-2 ease-out 7s infinite;
+    }
+    
+    
+@keyframes rotate-1{ 
+    0% {    transform: rotate(-45deg) scale(1,1);  height: 80px; }
+    60% {    transform: rotate(135deg) scale(0.5,0.5);  height: 10px; }
+    100% {    transform: rotate(315deg) scale(1,1);  height: 80px; }
+}    
+@keyframes rotate-2{ 
+    0% {    transform: rotate(0deg);   }
+    40% {    transform: rotate(180deg);  }
+    100% {    transform: rotate(360deg);   }
+}    
+    
+    
+    
+    #games-list{
+        margin-top: 100px;
+    }    
+    #games-list>gb{
+        text-decoration: none;
+        word-wrap: break-word; color: white;
+        padding: 10px 20px;
+        background: #ffffff44; 
+        background: linear-gradient(to bottom, #00081744, #ffffff44);
+        border-radius: 5px;
+        display: block; width: 90%;
+        min-height: 200px; margin: 50px auto;
+        padding: 20px; box-sizing: border-box;
+        position: relative;
+    }    
+    
+    
+    
+    #games-list>gb game-name{
+        color: orangered;
+        font-weight: 500; font-style: bold; font-size: 25px;
+        font-family: p2F; 
+    }    
+    #games-list>gb game-story{
+        color: white;
+        font-weight: 1000; font-style: bold; font-size: 30px;
+        font-family: hF; 
+        padding-right: 50px;
+    }    
+    #games-list>gb play-but{
+        display: block;
+        width: 80px; height: 16px;
+        padding: 8px 16px; color: white;
+        background: linear-gradient(to right, orangered, #db7210);
+        border-radius: 50px;
+        position: absolute; top: 100%;
+        transform: translate(0, -50%);
+    }    
+    #games-list>gb play-but icon{
+        
+    }    
+    #games-list>gb play-but icon::before{
+         content: ""; position: absolute; 
+         width: 7px; height: 28px;
+         background: #000817;
+         transform: rotate(-45deg);
+         top: 0;
+         animation: icon-effect-1 ease-out 7s infinite;
+    }    
+    #games-list>gb play-but icon::after{
+         content: ""; position: absolute; 
+         width: 7px; height: 28px;
+         background: #000817;
+         transform: rotate(45deg);
+         top: 0;
+         animation: icon-effect-2 ease-out 7s infinite;
+    }    
+    #games-list>gb play-but text{
+        color: white;
+        font-size: 20px; font-weight: 500px; font-family: pF;
+        margin-left: 30px; position: absolute;
+        top: 50%; transform: translate(0, -50%);
+    }    
+    
+
+@keyframes icon-effect-1{ 
+    0% {    transform: rotate(-45deg);   }
+    60% {    transform: rotate(135deg);  }
+    100% {    transform: rotate(315deg);   }
+}    
+@keyframes icon-effect-2{ 
+    0% {    transform: rotate(45deg);   }
+    60% {    transform: rotate(225deg);  }
+    100% {    transform: rotate(405deg);   }
+}    
+    
+    
+    
+    
+    
+    
+    
+    
+    </style>
+    </head>
+    <body>
+        <header><!--Gamespace.io-->
+        <div id="menu-list" >
+        <div class="menu-item" t-triangle>
+            <icon></icon>
+            <p>browse </p>
+        </div>
+        <div class="menu-item" t-x>
+            <icon></icon>
+            <p>sigin-in </p>
+        </div>
+        <div class="menu-item" t-box>
+            <icon></icon>
+            <p>history </p>
+        </div>
+        <div class="menu-item" t-o>
+            <icon></icon>
+            <p>settings </p>
+        </div>
+        </div>
+        </header>
+        <section id="welcome-sect">
+            <p id="welcome-sect-main">Discover Amazing Web Games Here on <gs>Gamespace</gs></p>
+            <br><br><br><br>
+        </section>
+        
+        
+        
+        
+        <section id="games-list">
+            <gb class="" id="quarter-game" >
+                <game-name>quarter</game-name>
+                <br><br>
+                <game-story>An engaging math-puzzle game on the web. </game-story>
+                <play-but>
+                    <icon></icon>
+                    <text>play</text>
+                </play-but>
+            </gb>
+            
+            <gb class="" id="quarter-game" >
+                <game-name>looop</game-name>
+                <br><br>
+                <game-story>Get free from the looop in faster speed. </game-story>
+                <play-but>
+                    <icon></icon>
+                    <text>play</text>
+                </play-but>
+            </gb>
+        </section>
+        
+        
+        <br><br><br><br><br>
+        
+    </body>
+</html>

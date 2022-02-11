@@ -1,0 +1,212 @@
+<html>
+    <head>
+<meta name="viewport" content="width=device-width, height=device-height, initial-scale=1">
+<link rel="stylesheet" href="css/constant.css"> 
+<style>
+    html,body{
+        background-color: white;// #000817;
+        width: 100%; height: 100%;
+        margin: 0; padding: 0;
+    }    
+</style>
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+<script src="http://localhost:1111/CodeHelps/src/CodeHelps.js"></script>
+<script src="http://localhost:1111/CDraw/src/CDraw.js"></script>
+<script>
+let a = document.getElementById("canvas");
+let b = a.getContext("2d");
+CDraw.setCanvasStyle(a, {type: "fill", alpha: 0, position: "static", pinToTop: true});   
+a.style.position = "absolute";
+a.style.top = "50%";
+a.style.left = "50%"
+a.style.display = "block";
+a.style.margin = "0 auto"
+a.style.transform = "translate(-50%,-50%)";
+drawOn(b); 
+
+
+
+function drawOn(b){ 
+    let CW = a.width = 300;
+    let CH = a.height = 300;
+    let CR = MHelp.resultantOf(CW, CH);
+    let scene = new CDraw.useScene(b);
+    let bgRect = new CDraw.rect(0, CW, 0, CH, "_#000817");
+    scene.add(bgRect);
+    
+    
+    
+    let fogColor1 = b.createLinearGradient(0, 0, 0, CH);
+    fogColor1.addColorStop(0, "transparent");
+    fogColor1.addColorStop(1, "rgba(250,50,120,0.5)");
+    let bg = 
+    {
+    shapes: [
+        new CDraw.rect(CW/2, 20, CH/2-60, 60, ["", "rgba(250,200,50,0.5)"]),
+        new CDraw.rect(0, CW, 0, CH, ["", "red"]),
+    ],
+    setShapeColor: function(shape){
+        shape.color = fogColor1;
+    },
+    
+    }//EO bg
+    
+    
+    let hero = 
+    {
+    shape: new CDraw.arc(CW/10,CH/2,5,0,6.3,"_orangered"),
+    yke: 1,
+    xke: 0,
+    fxke: 1,
+    gravity: function(){
+         hero.yke += 0.05;
+         hero.xke = 0;
+    },
+    collision: function(){
+        let pitfall = false;
+        pits.shapes.map((shape, ind)=>{
+            if(hero.shape.x-hero.shape.radius/2>=shape.x
+             &&hero.shape.x+hero.shape.radius/2<=shape.x+shape.lengthX
+             &&hero.shape.y>=shape.y-2){
+                pitfall = true;
+                hero.fxke = 0;
+            }
+        });
+        if(hero.shape.y+hero.shape.radius/2>=floor.shape.y&&
+           hero.shape.y+hero.shape.radius/2<=floor.shape.y+floor.shape.breadthY){
+            //hero.shape.y = floor.shape.y-hero.shape.radius/2;
+            if(!pitfall)hero.yke = -1;
+        }
+        hurdles.shapes.map((shape, ind)=>{
+            if(hero.shape.x+hero.shape.radius/2>=shape.x
+             &&hero.shape.x-hero.shape.radius/2<=shape.x
+             &&hero.shape.y>=shape.y-2){
+                hero.xke = hurdles.speeds[ind];
+            }
+            if(hero.shape.x+hero.shape.radius/2>=shape.x+3
+             &&hero.shape.x+hero.shape.radius/2<=shape.x+shape.lengthX+3
+             &&hero.shape.y>=shape.y-2){
+                hero.yke = -1;
+            }
+        });
+        
+    },
+    move: function(){
+        hero.shape.y += hero.yke;
+        hero.shape.x += hero.xke;
+    },
+    }//EO hero
+    
+    let floor = 
+    {
+    shape: new CDraw.rect(0, CW, CH/1.5, 5, "_white"),
+    
+    }//EO floor
+    
+    let hurdles = 
+    {
+    shapes: 
+        [
+        new CDraw.rect(-10, 10, CH/1.5-15, 15, "_white"), 
+        new CDraw.rect(-10, 10, CH/1.5-15, 15, "_red"), 
+        ],
+    speeds:
+        [
+        -1,-1,-1
+        ],
+    move: function(){
+        hurdles.shapes.map((shape, ind)=>{
+            shape.x += hero.fxke*hurdles.speeds[ind];
+            if(shape.x<0-shape.lengthX){
+                shape.x = CW+CW*(Math.random()*10)/10;
+                shape.breadthY = 10+(Math.floor(10*Math.random()));
+                shape.lengthX = 10+(Math.floor(10*Math.random()));
+                shape.y = CH/1.5-shape.breadthY;
+                shape.color = 
+                "rgba("+(150+Math.floor(100*Math.random()))+",200,150)"
+            }
+        });
+    },
+    }//EO hurdles
+    
+    
+    
+    let pits = 
+    {
+    shapes: 
+        [
+        new CDraw.rect(-50, 10, CH/1.5, 5, "_red"), 
+        new CDraw.rect(-50, 10, CH/1.5, 5, "_red"), 
+        ],
+    speeds:
+        [
+        -1,-1
+        ],
+    move: function(){
+        pits.shapes.map((shape, ind)=>{
+            shape.x += hero.fxke*hurdles.speeds[ind];
+            if(shape.x<0-shape.lengthX){
+                shape.x = CW+CW*(Math.random()*10)/10;
+                shape.lengthX = 25+(Math.floor(15*Math.random()));
+            }
+            shape.color ="rgba(250,50,120,0.5)";//= fogColor1;
+        });
+    },
+    }//EO pits
+    
+    
+    
+    
+    
+    
+    
+    bg.shapes.map((shape)=>{
+        scene.add(shape);
+        bg.setShapeColor(shape);
+    });
+    
+    
+    
+    scene.add(floor.shape);
+    pits.shapes.map((shape)=>{
+        scene.add(shape)
+    });
+    scene.add(hero.shape);
+    hurdles.shapes.map((shape)=>{
+        scene.add(shape)
+    });
+    a.ontouchstart = function(){
+        hero.yke -= 0.5;
+    }//EO ontouchstart
+    update();
+    
+    
+    function update(){
+    ///
+    
+    hero.gravity();
+    hero.collision();
+    hero.move();
+    hurdles.move();
+    pits.move();
+    
+    
+    requestAnimationFrame(update)
+    }//EO updateFrame
+    
+    
+    
+    
+    
+    
+    
+}   //EO drawOn
+    
+    
+    
+    
+    
+</script>
+</html>
