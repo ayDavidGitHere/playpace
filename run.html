@@ -29,8 +29,8 @@ drawOn(b);
 
 
 function drawOn(b){ 
-    let CW = a.width = 300;
-    let CH = a.height = 300;
+    let CW = a.width = 325;
+    let CH = a.height = 325;
     let CR = MHelp.resultantOf(CW, CH);
     let scene = new CDraw.useScene(b);
     let bgRect = new CDraw.rect(0, CW, 0, CH, "_#000817");
@@ -40,11 +40,11 @@ function drawOn(b){
     
     let fogColor1 = b.createLinearGradient(0, 0, 0, CH);
     fogColor1.addColorStop(0, "transparent");
-    fogColor1.addColorStop(1, "rgba(250,50,120,0.5)");
+    fogColor1.addColorStop(1, "rgba(100,1060,120,5)");
     let bg = 
     {
     shapes: [
-        new CDraw.rect(CW/2, 20, CH/2-60, 60, ["", "rgba(250,200,50,0.5)"]),
+        //new CDraw.rect(CW/2, 20, CH/2-60, 60, ["", "rgba(250,200,50,0.5)"]),
         new CDraw.rect(0, CW, 0, CH, ["", "red"]),
     ],
     setShapeColor: function(shape){
@@ -54,50 +54,111 @@ function drawOn(b){
     }//EO bg
     
     
-    let hero = 
+    let moon = 
     {
-    shape: new CDraw.arc(CW/10,CH/2,5,0,6.3,"_orangered"),
-    yke: 1,
-    xke: 0,
-    fxke: 1,
-    gravity: function(){
-         hero.yke += 0.05;
-         hero.xke = 0;
+    shape: new CDraw.arc(0+20*2.5, 0+20*2.5, 20, 0, 6.3, "_whitesmoke"),
+    }//EO moon
+    
+    
+    let highrises = 
+    {
+    shapes: [
+        
+    ],
+    speed: 1.05,
+    lastshape: null,
+    move: function(){
+        highrises.shapes.map((shape, ind)=>{
+            shape.x -= hero.fxke*highrises.speed;
+            let lastshape = highrises.shapes[highrises.shapes.length-1];
+            if(!highrises.lastshape) highrises.lastshape = lastshape;
+            if(shape.x+shape.lengthX<0){
+                shape.x = highrises.lastshape.x+highrises.lastshape.lengthX-1;
+                highrises.lastshape = shape;
+            }//EO
+        });
     },
-    collision: function(){
-        let pitfall = false;
+    init: function(){
+        let length = highrises.shapes.length;
+        let lastshape = highrises.shapes[length-1];
+        lastshape = (lastshape?lastshape:{x:0, lengthX:0});
+        if(lastshape.x+lastshape.lengthX<CW+200){
+        let shape = new CDraw.rect(0, 0, floor.shape.y-15, 15, "_#111111");
+        shape.x = Number(lastshape.x+lastshape.lengthX-1);
+        shape.lengthX = CW/(5+Math.random()*2);
+        shape.breadthY = CH/(3-Math.random()*1);
+        shape.y = CH-shape.breadthY;
+        highrises.shapes.push(shape);
+        scene.add(shape);
+        this.init();
+        }
+    }
+    }//EO highrises
+    
+    
+    
+    
+    let modelplayer = function(){
+    this.shape = new CDraw.arc(CW/10,CH/1.8,5,0,6.3,"_orangered"),
+    this.yke = 1,
+    this.xke = 0,
+    this.fxke = 1,
+    this.gravity = function(){
+         this.yke += 0.1;
+         this.xke = 0;
+    },
+    this.collision = function(){
+        let inpitspace = false;
         pits.shapes.map((shape, ind)=>{
-            if(hero.shape.x-hero.shape.radius/2>=shape.x
-             &&hero.shape.x+hero.shape.radius/2<=shape.x+shape.lengthX
-             &&hero.shape.y>=shape.y-2){
-                pitfall = true;
-                hero.fxke = 0;
+            if(this.shape.x-this.shape.radius>=shape.x
+             &&this.shape.x+this.shape.radius<=shape.x+shape.lengthX){
+                inpitspace = true;
+                console.log("we in pit region")
+                //this.fxke = 0;
             }
         });
-        if(hero.shape.y+hero.shape.radius/2>=floor.shape.y&&
-           hero.shape.y+hero.shape.radius/2<=floor.shape.y+floor.shape.breadthY){
-            //hero.shape.y = floor.shape.y-hero.shape.radius/2;
-            if(!pitfall)hero.yke = -1;
+        if(this.shape.y+this.shape.radius>=floor.shape.y&&
+           this.shape.y+this.shape.radius<=floor.shape.y+floor.shape.breadthY){
+            //this.shape.y = floor.shape.y-this.shape.radius/2;
+            if(!inpitspace){ 
+                console.log(this.yke)
+                this.yke = 1;
+                if(this.yke >0.9) this.yke *= -0.9;
+                else this.yke = 1;
+            };
         }
         hurdles.shapes.map((shape, ind)=>{
-            if(hero.shape.x+hero.shape.radius/2>=shape.x
-             &&hero.shape.x-hero.shape.radius/2<=shape.x
-             &&hero.shape.y>=shape.y-2){
-                hero.xke = hurdles.speeds[ind];
+            if(this.shape.x+this.shape.radius>=shape.x
+             &&this.shape.x-this.shape.radius<=shape.x
+             &&this.shape.y+this.shape.radius>=shape.y){
+                this.xke = hurdles.speeds[ind];
             }
-            if(hero.shape.x+hero.shape.radius/2>=shape.x+3
-             &&hero.shape.x+hero.shape.radius/2<=shape.x+shape.lengthX+3
-             &&hero.shape.y>=shape.y-2){
-                hero.yke = -1;
+            if(this.shape.x>=shape.x
+             &&this.shape.x<=shape.x+shape.lengthX
+             &&this.shape.y+this.shape.radius>=shape.y){
+                this.yke = -1;
             }
         });
         
     },
-    move: function(){
-        hero.shape.y += hero.yke;
-        hero.shape.x += hero.xke;
+    this.move = function(){
+        this.gravity();
+        this.collision();
+        this.shape.y += this.yke;//-this.yke/2;
+        this.shape.x += this.xke;
     },
-    }//EO hero
+    this.jump = function(){
+        /*if(this.lastyke && Math.abs(this.lastyke-this.yke)>0.7)
+        this.yke -= 1;
+        this.lastyke = this.yke;*/
+        let ykeDiff = -(1-this.yke/10); 
+        console.log("*",ykeDiff)
+        this.yke = this.yke+ykeDiff;
+    }
+    }//EO modelplayer
+    
+    
+    
     
     let floor = 
     {
@@ -109,8 +170,8 @@ function drawOn(b){
     {
     shapes: 
         [
-        new CDraw.rect(-10, 10, CH/1.5-15, 15, "_white"), 
-        new CDraw.rect(-10, 10, CH/1.5-15, 15, "_red"), 
+        new CDraw.rect(-10, 10, floor.shape.y-15, 15, "_white"), 
+        new CDraw.rect(-10, 10, floor.shape.y-15, 15, "_red"), 
         ],
     speeds:
         [
@@ -119,13 +180,13 @@ function drawOn(b){
     move: function(){
         hurdles.shapes.map((shape, ind)=>{
             shape.x += hero.fxke*hurdles.speeds[ind];
-            if(shape.x<0-shape.lengthX){
+            if(shape.x+shape.lengthX<0){
                 shape.x = CW+CW*(Math.random()*10)/10;
                 shape.breadthY = 10+(Math.floor(10*Math.random()));
                 shape.lengthX = 10+(Math.floor(10*Math.random()));
-                shape.y = CH/1.5-shape.breadthY;
-                shape.color = 
-                "rgba("+(150+Math.floor(100*Math.random()))+",200,150)"
+                shape.y = floor.shape.y-shape.breadthY;
+                shape.color = floor.shape.color;
+                //"rgba(50,120,"+(200+Math.floor(50*Math.random()))+")"
             }
         });
     },
@@ -137,8 +198,8 @@ function drawOn(b){
     {
     shapes: 
         [
-        new CDraw.rect(-50, 10, CH/1.5, 5, "_red"), 
-        new CDraw.rect(-50, 10, CH/1.5, 5, "_red"), 
+        new CDraw.rect(-50, 10, floor.shape.y, floor.shape.breadthY, "_red"), 
+        new CDraw.rect(-50, 10, floor.shape.y, floor.shape.breadthY, "_red"), 
         ],
     speeds:
         [
@@ -147,50 +208,113 @@ function drawOn(b){
     move: function(){
         pits.shapes.map((shape, ind)=>{
             shape.x += hero.fxke*hurdles.speeds[ind];
-            if(shape.x<0-shape.lengthX){
+            if(shape.x+shape.lengthX<0){
                 shape.x = CW+CW*(Math.random()*10)/10;
                 shape.lengthX = 25+(Math.floor(15*Math.random()));
             }
-            shape.color ="rgba(250,50,120,0.5)";//= fogColor1;
+            shape.color ="#111111";//= fogColor1;
         });
     },
     }//EO pits
     
     
     
+    let coins = 
+    {
+    shapes: 
+        [
+        new CDraw.arc(-CW/2, CH/2, 50, 0, 6.3, "1_red"), 
+        new CDraw.arc(-CW/1, CH/2, 20, 0, 6.3, "1_blue"), 
+        ],
+    speeds:
+        [
+        -1,-1
+        ],
+    move: function(){
+        coins.shapes.map((shape, ind)=>{
+            shape.x += hero.fxke*hurdles.speeds[ind];
+            if(shape.x+shape.radius<0){
+                shape.alpha = 1;
+                shape.x = CW+CW*(Math.random()*10)/10;
+                shape.y = floor.shape.y-CH/(6+Math.random()*3);
+                shape.radius = 
+                1.5*hero.shape.radius+(Math.random()*hero.shape.radius);
+            }
+            shape.color = "red";
+            //Check Hit.
+            if(getCollDistance(shape, hero.shape).distance<0){
+                console.log("Ring Hit");
+                shape.alpha = 0;
+                hero.shape.x+=3;
+            }
+        });
+    },
+    }//EO coins
     
     
     
     
+    
+    
+    
+    let players = [1, 2];
+    for(let i=0; players.length>i; i++){
+        players[i] = new modelplayer();
+        players[i].shape.x += -10+Math.random()*20;
+        players[i].shape.y -= -10+Math.random()*20;
+        //players[i] = {...modelplayer};
+    }
+    let hero = players[0];
+    let ai = players[1];
+    ai.shape.color = "crimson";
+    ai.shape.radius = 7;
+    console.log(hero.shape.color)
+    
+    
+    
+    
+    scene.add(moon.shape);
+    moon.shape.alpha = 0.7;
+    moon.shape.GCParams.shadow = 
+    [0.001,0.001, moon.shape.color, moon.shape.radius*2];
     bg.shapes.map((shape)=>{
         scene.add(shape);
         bg.setShapeColor(shape);
     });
-    
-    
-    
+    highrises.init();
     scene.add(floor.shape);
     pits.shapes.map((shape)=>{
         scene.add(shape)
     });
-    scene.add(hero.shape);
+    coins.shapes.map((shape)=>{
+        scene.add(shape);
+        shape.GCParams.shadow = 
+        [0.001,0.001, "red", shape.radius/2];
+    });
     hurdles.shapes.map((shape)=>{
         scene.add(shape)
-    });
+    }); 
+    for(let i=0; players.length>i; i++){
+        scene.add(players[i].shape);
+    }
+    
     a.ontouchstart = function(){
-        hero.yke -= 0.5;
+        hero.jump();
     }//EO ontouchstart
+    //update()
     update();
     
     
     function update(){
-    ///
+    for(let i=0; players.length>i; i++){
+        players[i].move();
+    }
     
-    hero.gravity();
-    hero.collision();
-    hero.move();
+    
     hurdles.move();
     pits.move();
+    coins.move();
+    highrises.move();
     
     
     requestAnimationFrame(update)
@@ -200,11 +324,34 @@ function drawOn(b){
     
     
     
+    function aicontroller(){
+        let closest = {};
+        closest = [...hurdles.shapes, ...pits.shapes].sort((a, b)=>{
+            return a.x-b.x;
+        })[0];
+        
+        if(closest.x-ai.shape.x<20){ ai.jump(); console.log("ai jump")}
+        requestAnimationFrame(aicontroller)
+    }
+    aicontroller();
     
     
 }   //EO drawOn
     
     
+    
+    
+    
+    function getCollDistance(ball1, ball2){
+    let adj = ball1.x-ball2.x;
+    let opp = ball1.y-ball2.y;
+    let hyp = Math.sqrt(  Math.pow(adj,2) + Math.pow(opp,2)  )
+    let distance = hyp-(ball1.radius+ball2.radius);
+    
+    let norm = [1, 1];
+    norm[0] = adj/hyp; norm[1] = Math.abs(opp/hyp);
+    return{distance:distance, norm:norm};
+    }//EO getCollDistance
     
     
     

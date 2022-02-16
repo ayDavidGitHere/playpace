@@ -9,6 +9,7 @@
         margin: 0; padding: 0;
         overflow-x: hidden;
     }    
+    a{text-decoration: none;}
     header{
         display: block; width:90%; box-sizing: border-box;
         margin: 20px auto;
@@ -80,6 +81,11 @@
         min-height: 150px;
         width: 100%; box-sizing: border-box;
     }
+@media only screen and (min-width: 601px){
+    #welcome-sect{
+        width: 50%;
+    }
+}    
     #welcome-sect p#welcome-sect-main{
         color: white; margin-left: 20px; margin-right: 100px;
         font-weight: 1000; font-style: bold; font-size: 38px;
@@ -241,8 +247,10 @@
                 <br><br>
                 <game-story>An engaging math-puzzle game on the web. </game-story>
                 <play-but>
+                    <a href="./run.html">
                     <icon></icon>
                     <text>play</text>
+                    </a>
                 </play-but>
             </gb>
             
@@ -251,8 +259,10 @@
                 <br><br>
                 <game-story>Get free from the looop in faster speed. </game-story>
                 <play-but>
+                    <a href="./looop.html">
                     <icon></icon>
                     <text>play</text>
+                    </a>
                 </play-but>
             </gb>
         </section>
